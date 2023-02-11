@@ -2,8 +2,6 @@ package com.zhang.autotouch.dialog;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.media.projection.MediaProjection;
-import android.media.projection.MediaProjectionManager;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,9 +19,12 @@ import com.zhang.autotouch.bean.TouchPoint;
 import com.zhang.autotouch.utils.DensityUtil;
 import com.zhang.autotouch.utils.DialogUtils;
 import com.zhang.autotouch.utils.GsonUtils;
+import com.zhang.autotouch.utils.ScreentShotUtil;
 import com.zhang.autotouch.utils.SpUtils;
 import com.zhang.autotouch.utils.ToastUtil;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class MenuDialog extends BaseServiceDialog implements View.OnClickListener {
@@ -125,7 +126,10 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 touchPointAdapter.setTouchPointList(touchPoints);
                 break;
             case R.id.bt_record:
-                TouchEvent.postCapture();
+                dismiss();
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                String fileName = format.format(new Date(System.currentTimeMillis())) + ".png";
+                ScreentShotUtil.getInstance().takeScreenshot(getContext(),"/sdcard/Pictures/"+fileName);
 //                dismiss();
 //                if (listener != null) {
 //                    listener.onFloatWindowAttachChange(false);
