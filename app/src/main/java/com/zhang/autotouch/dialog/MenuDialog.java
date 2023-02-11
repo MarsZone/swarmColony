@@ -2,6 +2,8 @@ package com.zhang.autotouch.dialog;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -33,6 +35,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
     private Listener listener;
     private TouchPointAdapter touchPointAdapter;
     private RecordDialog recordDialog;
+
 
     public MenuDialog(@NonNull Context context) {
         super(context);
@@ -122,21 +125,24 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 touchPointAdapter.setTouchPointList(touchPoints);
                 break;
             case R.id.bt_record:
-                dismiss();
-                if (listener != null) {
-                    listener.onFloatWindowAttachChange(false);
-                    if (recordDialog ==null) {
-                        recordDialog = new RecordDialog(getContext());
-                        recordDialog.setOnDismissListener(new OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                listener.onFloatWindowAttachChange(true);
-                                MenuDialog.this.show();
-                            }
-                        });
-                        recordDialog.show();
-                    }
-                }
+                TouchEvent.postCapture();
+//                dismiss();
+//                if (listener != null) {
+//                    listener.onFloatWindowAttachChange(false);
+//                    if (recordDialog ==null) {
+//                        recordDialog = new RecordDialog(getContext());
+//                        recordDialog.setOnDismissListener(new OnDismissListener() {
+//                            @Override
+//                            public void onDismiss(DialogInterface dialog) {
+//                                listener.onFloatWindowAttachChange(true);
+//                                MenuDialog.this.show();
+//                            }
+//                        });
+//                        recordDialog.show();
+//                    }
+//                }
+
+
                 break;
             case R.id.bt_stop:
                 btStop.setVisibility(View.GONE);

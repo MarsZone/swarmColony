@@ -61,7 +61,7 @@ public class AutoTouchService extends AccessibilityService {
 
     @Subscribe(threadMode = ThreadMode.POSTING)
     public void POSTING(TouchEvent event){
-        Log.d(TAG, "onReciverTouchEvent:POSTING " + event.toString());
+        Log.d(TAG, "onReciverTouchEvent: POSTING " + event.toString());
     }
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void BACKGROUND(TouchEvent event){

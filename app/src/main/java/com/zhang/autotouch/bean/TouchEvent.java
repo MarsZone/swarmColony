@@ -14,7 +14,7 @@ public class TouchEvent {
     public static final int ACTION_PAUSE = 2;
     public static final int ACTION_CONTINUE = 3;
     public static final int ACTION_STOP = 4;
-
+    public static final int ACTION_CAPTURE=5;
     private int action;
     private TouchPoint touchPoint;
 
@@ -49,6 +49,10 @@ public class TouchEvent {
 
     public static void postContinueAction() {
         postAction(new TouchEvent(ACTION_CONTINUE));
+    }
+
+    public static void postCapture(){
+        postAction(new TouchEvent(ACTION_CAPTURE));
     }
 
     public static void postStopAction() {
