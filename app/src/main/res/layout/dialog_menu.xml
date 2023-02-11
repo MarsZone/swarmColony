@@ -54,7 +54,7 @@
             android:layout_marginStart="1dp"
             android:layout_weight="1"
             android:background="#666"
-            android:text="截屏"
+            android:text="挖矿"
             android:textColor="#fff"
             android:textSize="15sp" />
 

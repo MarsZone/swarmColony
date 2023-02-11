@@ -123,11 +123,13 @@ public class ScreentShotUtil
 		
 		if(ShellUtils.checkRootPermission()){
 			if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH){
+				Log.d("ScreenShot","cmd");
 				ShellUtils.execCommand("/system/bin/screencap -p "+ fileFullPath,true);
 			}
 		}
 		else {
 			if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN_MR2 && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH){
+				Log.d("ScreenShot","wm");
 				wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 				mDisplay = wm.getDefaultDisplay();
 				mDisplayMatrix = new Matrix();

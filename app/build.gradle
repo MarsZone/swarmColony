@@ -26,4 +26,5 @@ dependencies {
     implementation 'me.jessyan:autosize:1.1.2'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'com.rmtheis:tess-two:9.1.0'
 }

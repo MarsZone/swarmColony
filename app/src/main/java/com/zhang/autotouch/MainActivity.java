@@ -3,11 +3,13 @@ package com.zhang.autotouch;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.hardware.display.DisplayManager;
@@ -16,6 +18,7 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -50,7 +53,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvStart;
     private final String STRING_START = "开始";
     private final String STRING_ACCESS = "无障碍服务";
-    private final String STRING_ALERT = "悬浮窗权限";
+    private final String STRING_ALERT = "悬浮窗权限";/**
+     * 权限请求值
+     */
+    private static final int PERMISSION_REQUEST_CODE=0;
+
 
     private Handler handler = new Handler(Looper.getMainLooper());
 
@@ -95,6 +102,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         EventBus.getDefault().register(this);
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+            }
+        }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onReciverTouchEventMain(TouchEvent event) {
