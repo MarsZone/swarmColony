@@ -17,12 +17,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import com.zhang.autotouch.bean.TouchPoint;
 
 public class ScreentShotUtil
 {
@@ -73,18 +76,26 @@ public class ScreentShotUtil
 		{
 			Log.i(TAG, "width : " + width);
 			Log.i(TAG, "height : " + height);
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2)
-			{
-				
-				surfaceClass = Class.forName(CLASS1_NAME);
-			}
-			else
-			{
-				surfaceClass = Class.forName(CLASS2_NAME);
-			}
-			method = surfaceClass.getDeclaredMethod(METHOD_NAME, int.class, int.class);
+			surfaceClass = Class.forName(CLASS1_NAME);
+			Log.i(TAG, "surfaceClass : " + surfaceClass);
+
+//			surfaceClass = Class.forName(CLASS2_NAME);
+//			Log.i(TAG, "surfaceClass2 : " + surfaceClass);
+
+//			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2)
+//			{
+//
+//			}
+//			else
+//			{
+//
+//			}
+			method = surfaceClass.getMethod(METHOD_NAME, new Class[]{Rect.class,int.class,int.class,int.class});
 			method.setAccessible(true);
-			return (Bitmap) method.invoke(null, width, height);
+			Bitmap bitmap = (Bitmap) method.invoke(null,new Rect(), width, height,0);
+			Log.i(TAG, "bitmap : " + bitmap.toString());
+
+			return bitmap;
 		}
 		catch (NoSuchMethodException e)
 		{
@@ -109,6 +120,61 @@ public class ScreentShotUtil
 		return null;
 	}
 
+	public void takeScreenShotBitMapData(Context context){
+		wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		mDisplay = wm.getDefaultDisplay();
+		mDisplayMatrix = new Matrix();
+		mDisplayMetrics = new DisplayMetrics();
+		// We need to orient the screenshot correctly (and the Surface api seems to take screenshots
+		// only in the natural orientation of the device :!)
+		mDisplay.getRealMetrics(mDisplayMetrics);
+		float[] dims =
+				{
+						mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels
+				};
+		float degrees = getDegreesForRotation(mDisplay.getRotation());
+		boolean requiresRotation = (degrees > 0);
+//		if (requiresRotation)
+//		{
+//			// Get the dimensions of the device in its native orientation
+//			mDisplayMatrix.reset();
+//			mDisplayMatrix.preRotate(-degrees);
+//			mDisplayMatrix.mapPoints(dims);
+//			dims[0] = Math.abs(dims[0]);
+//			dims[1] = Math.abs(dims[1]);
+//		}
+
+		Bitmap mScreenBitmap = screenShot((int) dims[0], (int) dims[1]);
+//		if (requiresRotation)
+//		{
+//			// Rotate the screenshot to the current orientation
+//			Bitmap ss = Bitmap.createBitmap(mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels,
+//					Bitmap.Config.ARGB_8888);
+//			Canvas c = new Canvas(ss);
+//			c.translate(ss.getWidth() / 2, ss.getHeight() / 2);
+//			c.rotate(degrees);
+//			c.translate(-dims[0] / 2, -dims[1] / 2);
+//			c.drawBitmap(mScreenBitmap, 0, 0, null);
+//			c.setBitmap(null);
+//			mScreenBitmap = ss;
+//			if (ss != null && !ss.isRecycled())
+//			{
+//				ss.recycle();
+//			}
+//		}
+
+		// If we couldn't take the screenshot, notify the user
+		if (mScreenBitmap == null)
+		{
+			Toast.makeText(context, "screen shot fail", Toast.LENGTH_SHORT).show();
+		}else{
+			// Optimizations
+			mScreenBitmap.setHasAlpha(false);
+			mScreenBitmap.prepareToDraw();
+			String fileFullPath = "/sdcard/Pictures/test.png";
+			saveBitmap2file(context, mScreenBitmap, fileFullPath);
+		}
+	}
 	/**
 	 * Takes a screenshot of the current display and shows an animation.
 	 */

@@ -23,6 +23,7 @@ import com.zhang.autotouch.bean.TouchPoint;
 import com.zhang.autotouch.utils.DensityUtil;
 import com.zhang.autotouch.utils.DialogUtils;
 import com.zhang.autotouch.utils.GsonUtils;
+import com.zhang.autotouch.utils.ScreentShotUtil;
 import com.zhang.autotouch.utils.SpUtils;
 import com.zhang.autotouch.utils.ToastUtil;
 
@@ -33,6 +34,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class MenuDialog extends BaseServiceDialog implements View.OnClickListener {
@@ -116,7 +119,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 }
             }
         });
-
+        copyToSD(LANGUAGE_PATH, DEFAULT_LANGUAGE_NAME);
     }
 
     @Override
@@ -157,26 +160,33 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 break;
             case R.id.bt_record:
                 dismiss();
-//                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-//                String fileName = format.format(new Date(System.currentTimeMillis())) + ".png";
-//                ScreentShotUtil.getInstance().takeScreenshot(getContext(),"/sdcard/Pictures/"+fileName);
-                copyToSD(LANGUAGE_PATH, DEFAULT_LANGUAGE_NAME);
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                String fileName = format.format(new Date(System.currentTimeMillis())) + ".jpg";
+                ScreentShotUtil.getInstance().takeScreenshot(getContext(),fileName);
                 FileInputStream fis = null;
                 try {
-                    fis = new FileInputStream("/sdcard/Pictures/save.png");
+                    Thread.sleep(1000);
+                    fis = new FileInputStream(fileName);
                     Bitmap bitmap  = BitmapFactory.decodeStream(fis);
                     TessBaseAPI tessBaseAPI = new TessBaseAPI();
                     tessBaseAPI.init(DATAPATH, DEFAULT_LANGUAGE);
                     tessBaseAPI.setImage(bitmap);
                     String text = tessBaseAPI.getUTF8Text();
                     Log.i("ReadPict", System.currentTimeMillis()+"|Context:" + text);
-
                 } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
 
 
-//                dismiss();
+                break;
+            case R.id.bt_stop:
+                btStop.setVisibility(View.GONE);
+                TouchEvent.postStopAction();
+                ToastUtil.show("已停止触控");
+                break;
+            //                dismiss();
 //                if (listener != null) {
 //                    listener.onFloatWindowAttachChange(false);
 //                    if (recordDialog ==null) {
@@ -191,14 +201,6 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
 //                        recordDialog.show();
 //                    }
 //                }
-
-
-                break;
-            case R.id.bt_stop:
-                btStop.setVisibility(View.GONE);
-                TouchEvent.postStopAction();
-                ToastUtil.show("已停止触控");
-                break;
             case R.id.bt_exit:
                 TouchEvent.postStopAction();
                 if (listener != null) {

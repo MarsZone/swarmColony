@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.IBinder;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,6 +17,9 @@ import com.zhang.autotouch.R;
 import com.zhang.autotouch.dialog.MenuDialog;
 import com.zhang.autotouch.utils.DensityUtil;
 import com.zhang.autotouch.utils.WindowUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * 悬浮窗
@@ -77,6 +82,19 @@ public class FloatingService extends Service {
                         }
                         break;
                     case MotionEvent.ACTION_UP:
+                        View rootView = mFloatingView.getRootView();
+                        rootView.setDrawingCacheEnabled(true);
+                        Bitmap bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+                        rootView.setDrawingCacheEnabled(false);
+                        File file = new File("/sdcard/Pictures/",System.currentTimeMillis()+"view.png");
+                        try {
+                            FileOutputStream fOut = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+                            fOut.flush();
+                            fOut.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         if (!isMoving) {
                             onShowSelectDialog();
                             return true;
