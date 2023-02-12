@@ -162,24 +162,24 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 dismiss();
                 SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                 String fileName = format.format(new Date(System.currentTimeMillis())) + ".jpg";
+                fileName ="/sdcard/Pictures/"+fileName;
                 ScreentShotUtil.getInstance().takeScreenshot(getContext(),fileName);
                 FileInputStream fis = null;
                 try {
+                    Log.d("ReadImg","ReadStart"+System.currentTimeMillis());
                     Thread.sleep(1000);
                     fis = new FileInputStream(fileName);
                     Bitmap bitmap  = BitmapFactory.decodeStream(fis);
+                    Bitmap isInStation = DialogUtils.cropBitmapTop(bitmap,1174,218,1250,256);
+                    DialogUtils.saveBitmap(isInStation,"isInStation");
                     TessBaseAPI tessBaseAPI = new TessBaseAPI();
                     tessBaseAPI.init(DATAPATH, DEFAULT_LANGUAGE);
-                    tessBaseAPI.setImage(bitmap);
+                    tessBaseAPI.setImage(isInStation);
                     String text = tessBaseAPI.getUTF8Text();
                     Log.i("ReadPict", System.currentTimeMillis()+"|Context:" + text);
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                } catch (InterruptedException e) {
+                } catch (FileNotFoundException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-
-
                 break;
             case R.id.bt_stop:
                 btStop.setVisibility(View.GONE);

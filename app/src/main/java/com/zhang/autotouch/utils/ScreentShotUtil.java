@@ -189,8 +189,9 @@ public class ScreentShotUtil
 		
 		if(ShellUtils.checkRootPermission()){
 			if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH){
-				Log.d("ScreenShot","cmd");
+				Log.d("ScreenShot","Start"+System.currentTimeMillis());
 				ShellUtils.execCommand("/system/bin/screencap -p "+ fileFullPath,true);
+				Log.d("ScreenShot","End"+System.currentTimeMillis());
 			}
 		}
 		else {
