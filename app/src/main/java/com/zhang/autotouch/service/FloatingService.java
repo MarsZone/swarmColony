@@ -82,19 +82,19 @@ public class FloatingService extends Service {
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        View rootView = mFloatingView.getRootView();
-                        rootView.setDrawingCacheEnabled(true);
-                        Bitmap bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
-                        rootView.setDrawingCacheEnabled(false);
-                        File file = new File("/sdcard/Pictures/",System.currentTimeMillis()+"view.png");
-                        try {
-                            FileOutputStream fOut = new FileOutputStream(file);
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
-                            fOut.flush();
-                            fOut.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+//                        View rootView = mFloatingView.getRootView();
+//                        rootView.setDrawingCacheEnabled(true);
+//                        Bitmap bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+//                        rootView.setDrawingCacheEnabled(false);
+//                        File file = new File("/sdcard/Pictures/",System.currentTimeMillis()+"view.png");
+//                        try {
+//                            FileOutputStream fOut = new FileOutputStream(file);
+//                            bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+//                            fOut.flush();
+//                            fOut.close();
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
                         if (!isMoving) {
                             onShowSelectDialog();
                             return true;

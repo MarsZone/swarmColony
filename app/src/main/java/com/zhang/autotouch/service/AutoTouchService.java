@@ -59,28 +59,33 @@ public class AutoTouchService extends AccessibilityService {
         windowManager = WindowUtils.getWindowManager(this);
     }
 
-    @Subscribe(threadMode = ThreadMode.POSTING)
-    public void POSTING(TouchEvent event){
-        Log.d(TAG, "onReciverTouchEvent: POSTING " + event.toString());
-    }
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void BACKGROUND(TouchEvent event){
-        Log.d(TAG, "onReciverTouchEvent: BACKGROUND" + event.toString());
-    }
+//    @Subscribe(threadMode = ThreadMode.POSTING)
+//    public void POSTING(TouchEvent event){
+//        Log.d(TAG, "onReciverTouchEvent: POSTING " + event.toString());
+//    }
+//    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+//    public void BACKGROUND(TouchEvent event){
+//        Log.d(TAG, "onReciverTouchEvent: BACKGROUND" + event.toString());
+//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onReciverTouchEventMain(TouchEvent event) {
+    public void onReceiverTouchEventMain(TouchEvent event) {
         Log.d(TAG, "onReciverTouchEvent: " + event.toString());
         TouchEventManager.getInstance().setTouchAction(event.getAction());
         handler.removeCallbacks(autoTouchRunnable);
         switch (event.getAction()) {
             case TouchEvent.ACTION_START:
                 autoTouchPoint = event.getTouchPoint();
-                onAutoClick();
+//                onAutoClick();
                 break;
+            case TouchEvent.ACTION_START_ONCE:
+                autoTouchPoint = event.getTouchPoint();
+                if (autoTouchPoint != null) {
+                    onAutoClickOnce();
+                }
             case TouchEvent.ACTION_CONTINUE:
                 if (autoTouchPoint != null) {
-                    onAutoClick();
+//                    onAutoClick();
                 }
                 break;
             case TouchEvent.ACTION_PAUSE:
@@ -95,14 +100,62 @@ public class AutoTouchService extends AccessibilityService {
                 break;
         }
     }
+    public void disPatchEvent(int hasNext) throws InterruptedException {
+        if(autoTouchPoint.getName().equals("库存界面")){
+            Thread.sleep(2000);
+            TouchEvent.postStartActionOnceDone();
+        }else {
+            if(hasNext==1){
+                TouchEvent.postStartActionOnceDone();
+            }
+        }
+    }
 
+    public void onAutoClickOnce(){
+        class touchRunnable implements Runnable{
+            int mx=0;
+            int my=0;
+            int mhasNext=0;
+            touchRunnable(int x,int y,int hasNext){
+                mx=x;my=y;mhasNext = hasNext;
+            }
+            @Override
+            public void run() {
+                Log.d(TAG, "onAutoClickOnce: " + "x=" + mx + " y=" + my);
+                Path path = new Path();
+                path.moveTo(mx, my);
+                GestureDescription.Builder builder = new GestureDescription.Builder();
+                GestureDescription gestureDescription = builder.addStroke(
+                                new GestureDescription.StrokeDescription(path, 0, 100))
+                        .build();
+                dispatchGesture(gestureDescription, new AccessibilityService.GestureResultCallback() {
+                    @Override
+                    public void onCompleted(GestureDescription gestureDescription) {
+                        super.onCompleted(gestureDescription);
+                        Log.d("AutoTouchServiceOnce", "滑动结束Once" + gestureDescription.getStrokeCount());
+                        try {
+                            disPatchEvent(mhasNext);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(    GestureDescription gestureDescription) {
+                        super.onCancelled(gestureDescription);
+                        Log.d("AutoTouchServiceOnce", "滑动取消");
+                    }
+                }, null);
+            }
+        }
+        new Handler().postDelayed(new touchRunnable(autoTouchPoint.getX(),autoTouchPoint.getY(),autoTouchPoint.getHasNext()),autoTouchPoint.getDelay());
+    }
     /**
      * 执行自动点击
      */
     private void onAutoClick() {
         if (autoTouchPoint != null) {
             handler.postDelayed(autoTouchRunnable, getDelayTime());
-            showTouchView();
+//            showTouchView();
         }
     }
 
@@ -129,14 +182,15 @@ public class AutoTouchService extends AccessibilityService {
                     Log.d("AutoTouchService", "滑动取消");
                 }
             }, null);
-            onAutoClick();
+//            onAutoClick();
         }
     };
 
     private long getDelayTime() {
 //        int random = (int) (Math.random() * (30 - 1) + 1);
 //        return autoTouchEvent.getDelay() * 1000L + random;
-        return autoTouchPoint.getDelay() * 1000L;
+//        return autoTouchPoint.getDelay() * 1000L;
+         return autoTouchPoint.getDelay()*1L;
     }
 
     @Override
@@ -176,7 +230,7 @@ public class AutoTouchService extends AccessibilityService {
                 windowManager.addView(tvTouchPoint, params);
             }
             //开启倒计时
-            countDownTime = autoTouchPoint.getDelay();
+            countDownTime = Math.round(autoTouchPoint.getDelay()/1000);
             if(touchViewRunnable == null) {
                 touchViewRunnable = new Runnable() {
                     @Override
