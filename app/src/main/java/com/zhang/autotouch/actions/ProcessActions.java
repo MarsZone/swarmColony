@@ -44,7 +44,9 @@ public class ProcessActions {
         TouchEvent.postStartActionOnce(touchPoint);
         touchPoint = new TouchPoint("卸货_移动至",145,151,1500);
         TouchEvent.postStartActionOnce(touchPoint);
-        touchPoint = new TouchPoint("卸货_物品机库",478,162,2500,1);
+        touchPoint = new TouchPoint("卸货_物品机库",478,162,2500);
+        TouchEvent.postStartActionOnce(touchPoint);
+        touchPoint = new TouchPoint("卸货_选择回舰船库",137,548,3500,1);
         TouchEvent.postStartActionOnce(touchPoint);
     }
 
