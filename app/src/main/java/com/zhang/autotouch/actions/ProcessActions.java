@@ -1,7 +1,10 @@
 package com.zhang.autotouch.actions;
 
+import com.zhang.autotouch.R;
 import com.zhang.autotouch.bean.TouchEvent;
 import com.zhang.autotouch.bean.TouchPoint;
+
+import java.util.Random;
 
 public class ProcessActions {
     public static String MiningProcess= "挖矿";
@@ -81,6 +84,26 @@ public class ProcessActions {
         touchPoint = new TouchPoint("启动矿机1",846,659,4500);
         TouchEvent.postStartActionOnce(touchPoint);
         touchPoint = new TouchPoint("启动矿机2",937,660,5500);
+        TouchEvent.postStartActionOnce(touchPoint);
+    }
+
+    public static void randomChangeTargetProcess()throws InterruptedException{
+        TouchPoint touchPoint = new TouchPoint("矿点",1252,209,1000);
+        TouchEvent.postStartActionOnce(touchPoint);
+        Random random = new Random();
+        int next = random.nextInt(3);
+        touchPoint = new TouchPoint("第一个",firstRow.getX(),firstRow.getY()+next*70,2000);
+        TouchEvent.postStartActionOnce(touchPoint);
+        touchPoint = new TouchPoint("环绕",845,250+next*70,3000);
+        TouchEvent.postStartActionOnce(touchPoint);
+    }
+
+    public static void goBack()throws InterruptedException{
+        TouchPoint touchPoint = new TouchPoint("空间站",1249,147,1000);
+        TouchEvent.postStartActionOnce(touchPoint);
+        touchPoint = new TouchPoint("第一个",firstRow.getX(),firstRow.getY(),2000);
+        TouchEvent.postStartActionOnce(touchPoint);
+        touchPoint = new TouchPoint("停靠",845,93,3000,1);
         TouchEvent.postStartActionOnce(touchPoint);
     }
 }

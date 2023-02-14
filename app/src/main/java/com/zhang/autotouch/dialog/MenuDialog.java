@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Random;
 
 public class MenuDialog extends BaseServiceDialog implements View.OnClickListener {
 
@@ -193,8 +194,52 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                     Log.d("isSpaceJumping","跃迁完成");
                     //到达目的地开始挖矿
                     ProcessActions.beginMiningProcess();
+                    tempCheckHandler.postDelayed(runnableIsInventoryFullCheck,8000);
                 }
 
+            } catch (InterruptedException | FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    };
+    public Runnable runnableIsInventoryFullCheck = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                boolean isFull = CheckActions.isFullFast(getContext());
+                if(isFull){
+                    //满了就回程
+                    Log.d("IsInventory","回程");
+                    ProcessActions.goBack();
+                    tempCheckHandler.postDelayed(runnableIsGoBack,5000);
+                }else{
+                    //不满就继续
+                    Log.d("IsInventory","继续挖");
+                    ProcessActions.randomChangeTargetProcess();
+                    //随机换个矿挖
+                    Random random = new Random();
+                    int nextTime = random.nextInt(3)+1;
+                    tempCheckHandler.postDelayed(this,nextTime*30000);
+                }
+            } catch (FileNotFoundException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    };
+    public Runnable runnableIsGoBack = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                boolean isInStation = CheckActions.isInStation(getContext());
+                if(isInStation){
+                    Log.d("IsInventory","重新来");
+                    Thread.sleep(3000);
+                    curNode="校验存储空间_step_1";
+                    ProcessActions.openInventory();
+                }else{
+                    Log.d("IsInventory","没到家");
+                    tempCheckHandler.postDelayed(this,5000);
+                }
             } catch (InterruptedException | FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -253,7 +298,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 //校验库存量
                 dismiss();
                 try {
-                    boolean isFull = CheckActions.isFull(getContext());
+                    boolean isFull = CheckActions.isFullFast(getContext());
                 } catch (FileNotFoundException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }

@@ -27,11 +27,31 @@ public class CheckActions {
         FileInputStream fis = null;
         fis = new FileInputStream(fileName);
         Bitmap orgBitmap  = BitmapFactory.decodeStream(fis);
-        Bitmap checkArea = DialogUtils.cropBitmapTop(orgBitmap,786,684,799,696);
+        Bitmap checkArea = DialogUtils.cropBitmapTop(orgBitmap,736,684,749,696);
         int avgColor = BitMapUtils.getAvgColor(checkArea);
         Log.d("FullCheck",""+avgColor);
         //63 22
         if(avgColor>=60 && avgColor<=70){
+            return true;
+        }else{
+            return false;
+        }
+//        if(avgColor>=18 && avgColor<=26){
+//            return false;
+//        }
+    }
+    public static boolean isFullFast(Context context) throws FileNotFoundException, InterruptedException {
+        String fileName = saveCurrentScreen(context,"1","isFullTemp");
+        Thread.sleep(500);
+        //读取整个图。。
+        FileInputStream fis = null;
+        fis = new FileInputStream(fileName);
+        Bitmap orgBitmap  = BitmapFactory.decodeStream(fis);
+        Bitmap checkArea = DialogUtils.cropBitmapTop(orgBitmap,35,97,36,98);
+        int avgColor = BitMapUtils.getAvgColor(checkArea);
+        Log.d("FullCheck",""+avgColor);
+        //63 22
+        if(avgColor>=90 && avgColor<=96){
             return true;
         }else{
             return false;
