@@ -83,7 +83,7 @@ public class CheckActions {
         MRectArea mRectArea = new MRectArea(605,677,641,691);
         String text = getCheckText(context,mRectArea);
         Log.i("ReadPict", System.currentTimeMillis()+"|Context:" + text);
-        if(text.equals("眯")&&text.equals("米")){
+        if(text.equals("眯")||text.equals("米")){
             return false;
         }else {
             return true;
