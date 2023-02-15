@@ -345,12 +345,9 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
 //                }
             case R.id.bt_exit:
                 TouchEvent.postStopAction();
-                tempCheckHandler.removeCallbacks(new Runnable() {
-                    @Override
-                    public void run() {
-                        //nothing
-                    }
-                });
+                tempCheckHandler.removeCallbacks(runnableIsInStationCheck);
+                tempCheckHandler.removeCallbacks(runnableIsGoBack);
+                tempCheckHandler.removeCallbacks(runnableIsArrivedCheck);
                 if (listener != null) {
                     listener.onExitService();
                 }
