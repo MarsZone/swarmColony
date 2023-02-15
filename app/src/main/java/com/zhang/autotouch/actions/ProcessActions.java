@@ -35,7 +35,9 @@ public class ProcessActions {
         return "";
     }
     public static void openInventory() throws InterruptedException {
-        TouchPoint touchPoint = new TouchPoint("库存界面",27,116,500,1);
+        TouchPoint touchPoint = new TouchPoint("库存界面",27,116,500);
+        TouchEvent.postStartActionOnce(touchPoint);
+        touchPoint = new TouchPoint("卸货_选择回舰船库",137,548,1500,1);
         TouchEvent.postStartActionOnce(touchPoint);
     }
 
@@ -86,6 +88,8 @@ public class ProcessActions {
         touchPoint = new TouchPoint("启动矿机1",846,659,4500);
         TouchEvent.postStartActionOnce(touchPoint);
         touchPoint = new TouchPoint("启动矿机2",937,660,5500);
+        TouchEvent.postStartActionOnce(touchPoint);
+        touchPoint = new TouchPoint("启动矿机3",1005,660,6500);
         TouchEvent.postStartActionOnce(touchPoint);
     }
 
