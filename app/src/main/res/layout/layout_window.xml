@@ -3,4 +3,4 @@
     android:layout_width="50dp"
     android:layout_height="50dp"
     android:orientation="horizontal"
-    android:src="@mipmap/ic_launcher"></ImageView>
+    android:src="@mipmap/ic_launcher" />

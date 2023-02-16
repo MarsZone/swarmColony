@@ -47,12 +47,11 @@ public class CheckActions {
         FileInputStream fis = null;
         fis = new FileInputStream(fileName);
         Bitmap orgBitmap  = BitmapFactory.decodeStream(fis);
-        Bitmap checkArea = DialogUtils.cropBitmapTop(orgBitmap,35,97,36,98);
+        Bitmap checkArea = DialogUtils.cropBitmapTop(orgBitmap,34,96,35,97);
         int avgColor = BitMapUtils.getAvgColor(checkArea);
         Log.d("FullCheck",""+avgColor);
-        //63 22
-        if(avgColor>=90 && avgColor<=96){
-            return true;
+        if(avgColor>=0 && avgColor<=8){
+            return false;
         }else{
             return false;
         }

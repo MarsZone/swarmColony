@@ -226,24 +226,25 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
             }
         }
     };
+    public final Runnable runnableAgain = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                ProcessActions.openInventory();
+                curNode = "校验存储空间_step_1";
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    };
     public final Runnable runnableIsGoBack = new Runnable() {
         @Override
         public void run() {
             try {
                 boolean isInStation = CheckActions.isInStation(getContext());
                 if (isInStation) {
-                    Log.d("IsInventory", "重新来");
-                    tempCheckHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            curNode = "校验存储空间_step_1";
-                            try {
-                                ProcessActions.openInventory();
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    },5000);
+                    Log.d("IsInventory", "回城了");
+                    tempCheckHandler.postDelayed(runnableAgain,10000);
                 } else {
                     Log.d("IsInventory", "没到家");
                     tempCheckHandler.postDelayed(this, 5000);

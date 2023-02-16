@@ -78,7 +78,7 @@ public class ProcessActions {
     }
     //采矿
     public static void beginMiningProcess()throws InterruptedException{
-        TouchPoint touchPoint = new TouchPoint("矿点",1252,209,1000);
+        TouchPoint touchPoint = new TouchPoint("矿点",1252,83,1000);
         TouchEvent.postStartActionOnce(touchPoint);
         touchPoint = new TouchPoint("第一个",firstRow.getX(),firstRow.getY(),2000);
         TouchEvent.postStartActionOnce(touchPoint);
