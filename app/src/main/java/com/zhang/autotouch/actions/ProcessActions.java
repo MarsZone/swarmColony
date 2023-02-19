@@ -94,7 +94,7 @@ public class ProcessActions {
     }
 
     public static void randomChangeTargetProcess()throws InterruptedException{
-        TouchPoint touchPoint = new TouchPoint("矿点",1252,209,1000);
+        TouchPoint touchPoint = new TouchPoint("矿点",1252,83,1000);
         TouchEvent.postStartActionOnce(touchPoint);
         Random random = new Random();
         int next = random.nextInt(3);
