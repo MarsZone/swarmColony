@@ -48,7 +48,7 @@ public class ChatActivity extends AppCompatActivity {
 
         userIdText = findViewById(R.id.id);
         userId = String.valueOf(new Random().nextInt(100));
-        userIdText.setText(userId);
+        userIdText.setText(""+userId);
 
         chatUserIdText = findViewById(R.id.chat_user_id);
         submitButton = findViewById(R.id.submit);
