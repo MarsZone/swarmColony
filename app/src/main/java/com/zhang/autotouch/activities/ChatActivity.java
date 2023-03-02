@@ -16,13 +16,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.zhang.autotouch.R;
 import com.zhang.autotouch.conf.Const;
 import com.zhang.autotouch.utils.StompUtils;
+import com.zhang.autotouch.utils.UuidGen;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.StompClient;
+import ua.naiksoftware.stomp.dto.StompHeader;
 
 @SuppressWarnings({"FieldCanBeLocal", "ResultOfMethodCallIgnored", "CheckResult"})
 public class ChatActivity extends AppCompatActivity {
@@ -70,11 +74,15 @@ public class ChatActivity extends AppCompatActivity {
 
         StompClient stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, Const.address);
         Toast.makeText(this, "Start connecting to server", Toast.LENGTH_SHORT).show();
-        stompClient.connect();
+        List<StompHeader> headers = new ArrayList<>();
+        String uuid= UuidGen.generateShortUuid();
+        StompHeader stompHeader = new StompHeader("uuid", uuid);
+        headers.add(stompHeader);
+        stompClient.connect(headers);
         StompUtils.lifecycle(stompClient);
 
         Log.i(Const.TAG, "Subscribe chat endpoint to receive response");
-        stompClient.topic(Const.chatResponse.replace(Const.placeholder, userId)).subscribe(stompMessage -> {
+        stompClient.topic(Const.chatResponse.replace(Const.placeholder, uuid)).subscribe(stompMessage -> {
             JSONObject jsonObject = new JSONObject(stompMessage.getPayload());
             Log.i(Const.TAG, "Receive: " + jsonObject.toString());
             runOnUiThread(() -> {
