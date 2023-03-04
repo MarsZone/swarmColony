@@ -1,13 +1,17 @@
 package com.zhang.autotouch.dialog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,15 +24,19 @@ import com.zhang.autotouch.actions.ProcessActions;
 import com.zhang.autotouch.adapter.TouchPointAdapter;
 import com.zhang.autotouch.bean.TouchEvent;
 import com.zhang.autotouch.bean.TouchPoint;
+import com.zhang.autotouch.conf.Const;
 import com.zhang.autotouch.utils.DensityUtil;
 import com.zhang.autotouch.utils.DialogUtils;
 import com.zhang.autotouch.utils.GsonUtils;
 import com.zhang.autotouch.utils.SpUtils;
+import com.zhang.autotouch.utils.StompUtils;
 import com.zhang.autotouch.utils.ToastUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,6 +46,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Random;
+
+import ua.naiksoftware.stomp.Stomp;
+import ua.naiksoftware.stomp.StompClient;
 
 public class MenuDialog extends BaseServiceDialog implements View.OnClickListener {
 
@@ -92,6 +103,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
 
     public String curProcess="";
     public String curNode="";
+    TextView commandTextView;
     @Override
     protected void onInited() {
         setCanceledOnTouchOutside(true);
@@ -104,6 +116,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
         btStop = findViewById(R.id.bt_stop);
         btStop.setOnClickListener(this);
         rvPoints = findViewById(R.id.rv);
+        commandTextView = findViewById(R.id.txcommond);
         touchPointAdapter = new TouchPointAdapter();
         touchPointAdapter.setOnItemClickListener(new TouchPointAdapter.OnItemClickListener() {
             @Override
@@ -278,6 +291,17 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
             }
         }
     };
+
+    @SuppressLint("HandlerLeak")
+    Handler updateTextViewHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            String busMessage = msg.obj.toString();
+            //更新UI线程
+            commandTextView.append(busMessage);
+        }
+    };
     @Override
     public void onClick(View v) {
         Log.d("click","vid"+v.getId());
@@ -302,6 +326,21 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 touchPointAdapter.setTouchPointList(touchPoints);
                 break;
             case R.id.bt_action_open:
+                StompClient stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, Const.address);
+                StompUtils.lifecycle(stompClient);
+                Toast.makeText(getContext(),"Start connecting to server", Toast.LENGTH_SHORT).show();
+                // Connect to WebSocket server
+                stompClient.connect();
+                // 订阅消息
+                Log.i(Const.TAG, "Subscribe broadcast endpoint to receive response");
+                stompClient.topic(Const.broadcastResponse).subscribe(stompMessage -> {
+                    JSONObject jsonObject = new JSONObject(stompMessage.getPayload());
+                    Log.i(Const.TAG, "Receive: " + stompMessage.getPayload());
+                    Message message = new Message();
+                    message.obj = jsonObject.getString("responseMessage") + "\n";
+                    updateTextViewHandler.sendMessage(message);
+                });
+
                 break;
             case R.id.bt_check_kc:
                 //校验库存量
