@@ -25,12 +25,14 @@ import com.zhang.autotouch.adapter.TouchPointAdapter;
 import com.zhang.autotouch.bean.TouchEvent;
 import com.zhang.autotouch.bean.TouchPoint;
 import com.zhang.autotouch.conf.Const;
+import com.zhang.autotouch.dialog.message.MessageCenter;
 import com.zhang.autotouch.utils.DensityUtil;
 import com.zhang.autotouch.utils.DialogUtils;
 import com.zhang.autotouch.utils.GsonUtils;
 import com.zhang.autotouch.utils.SpUtils;
 import com.zhang.autotouch.utils.StompUtils;
 import com.zhang.autotouch.utils.ToastUtil;
+import com.zhang.autotouch.utils.UuidGen;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -44,11 +46,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.StompClient;
+import ua.naiksoftware.stomp.dto.StompHeader;
 
 public class MenuDialog extends BaseServiceDialog implements View.OnClickListener {
 
@@ -326,19 +330,36 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 touchPointAdapter.setTouchPointList(touchPoints);
                 break;
             case R.id.bt_action_open:
+                dismiss();
                 StompClient stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, Const.address);
                 StompUtils.lifecycle(stompClient);
                 Toast.makeText(getContext(),"Start connecting to server", Toast.LENGTH_SHORT).show();
                 // Connect to WebSocket server
-                stompClient.connect();
-                // 订阅消息
+                List<StompHeader> headers = new ArrayList<>();
+                String uuid= UuidGen.generateShortUuid();
+                StompHeader stompHeader = new StompHeader("uuid", uuid);
+                headers.add(stompHeader);
+                stompClient.connect(headers);
+                StompUtils.lifecycle(stompClient);
+                Context context = getContext();
+                //绑定私聊
+                stompClient.topic(Const.chatResponse.replace(Const.placeholder, uuid)).subscribe(stompMessage -> {
+                    JSONObject jsonObject = new JSONObject(stompMessage.getPayload());
+                    Log.i(Const.TAG, "Receive: " + jsonObject.toString());
+                    Message message = new Message();
+                    message.obj = jsonObject.getString("responseMessage") + "\n";
+                    updateTextViewHandler.sendMessage(message);
+                    MessageCenter.CommandCore(context,jsonObject,stompClient);
+
+                });
+                // 绑定广播
                 Log.i(Const.TAG, "Subscribe broadcast endpoint to receive response");
                 stompClient.topic(Const.broadcastResponse).subscribe(stompMessage -> {
                     JSONObject jsonObject = new JSONObject(stompMessage.getPayload());
                     Log.i(Const.TAG, "Receive: " + stompMessage.getPayload());
                     Message message = new Message();
                     message.obj = jsonObject.getString("responseMessage") + "\n";
-                    updateTextViewHandler.sendMessage(message);
+//                    updateTextViewHandler.sendMessage(message);
                 });
 
                 break;

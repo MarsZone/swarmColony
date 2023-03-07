@@ -47,7 +47,8 @@ public class FloatingService extends Service {
 //        floatLayoutParams.x = WindowUtils.getScreenWidth(this) - DensityUtil.dip2px(this, 0);
 //        floatLayoutParams.y = WindowUtils.getScreenHeight(this) - DensityUtil.dip2px(this, 0);
         floatLayoutParams.x = 0;
-        floatLayoutParams.y = WindowUtils.getScreenHeight(this) - DensityUtil.dip2px(this, 0);
+        floatLayoutParams.y = 420;
+//        floatLayoutParams.y = WindowUtils.getScreenHeight(this) - DensityUtil.dip2px(this, 0 );
         //获取WindowManager对象
         mWindowManager = WindowUtils.getWindowManager(this);
         addViewToWindow(mFloatingView, floatLayoutParams);

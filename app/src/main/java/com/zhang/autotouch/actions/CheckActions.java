@@ -59,18 +59,18 @@ public class CheckActions {
 //            return false;
 //        }
     }
-    static class MRectArea{
+    public static class MRectArea{
         public int x;
         public int y;
         public int xEnd;
         public int yEnd;
-        MRectArea(int _x,int _y,int _xEnd,int _yEnd){
+        public MRectArea(int _x, int _y, int _xEnd, int _yEnd){
             x=_x;y=_y;xEnd=_xEnd;yEnd=_yEnd;
         }
     }
     public static boolean isInStation(Context context) throws InterruptedException, FileNotFoundException {
         MRectArea mRectArea = new MRectArea(1174,218,1250,256);
-        String text = getCheckText(context,mRectArea);
+        String text = getCheckText(context,mRectArea,"isInStation");
         Log.i("ReadPict", System.currentTimeMillis()+"|Context:" + text);
         if(text.equals("离站")||text.equals("中止")){
             return true;
@@ -80,7 +80,7 @@ public class CheckActions {
     }
     public static boolean isSpaceJumping(Context context) throws InterruptedException, FileNotFoundException {
         MRectArea mRectArea = new MRectArea(605,677,641,691);
-        String text = getCheckText(context,mRectArea);
+        String text = getCheckText(context,mRectArea,"speed");
         Log.i("ReadPict", System.currentTimeMillis()+"|Context:" + text);
         if(text.equals("眯")||text.equals("米")){
             return false;
@@ -89,17 +89,17 @@ public class CheckActions {
         }
     }
 
-    public static String getCheckText(Context context,MRectArea mRectArea) throws InterruptedException, FileNotFoundException {
+    public static String getCheckText(Context context,MRectArea mRectArea,String checkDesc) throws InterruptedException, FileNotFoundException {
         String fileName = saveCurrentScreen(context,"1","isInStationTemp");
         //读取整个图。。
         FileInputStream fis = null;
         fis = new FileInputStream(fileName);
         Bitmap orgBitmap  = BitmapFactory.decodeStream(fis);
-        Bitmap isInStation = DialogUtils.cropBitmapTop(orgBitmap,mRectArea.x,mRectArea.y,mRectArea.xEnd,mRectArea.yEnd);
-        DialogUtils.saveBitmap(isInStation,"isInStation");
+        Bitmap cachesBitmap  = DialogUtils.cropBitmapTop(orgBitmap,mRectArea.x,mRectArea.y,mRectArea.xEnd,mRectArea.yEnd);
+        DialogUtils.saveBitmap(cachesBitmap,checkDesc);
         TessBaseAPI tessBaseAPI = new TessBaseAPI();
         tessBaseAPI.init(DATAPATH, DEFAULT_LANGUAGE);
-        tessBaseAPI.setImage(isInStation);
+        tessBaseAPI.setImage(cachesBitmap);
         String text = tessBaseAPI.getUTF8Text();
         return text;
     }
