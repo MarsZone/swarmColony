@@ -7,21 +7,29 @@ import com.zhang.autotouch.bean.TouchEvent;
 import com.zhang.autotouch.bean.TouchPoint;
 import com.zhang.autotouch.conf.Const;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import ua.naiksoftware.stomp.StompClient;
 
 public class MessageCenter {
-
+    public static void sendMessage(StompClient stompClient,String message) throws JSONException {
+        JSONObject responseObject = new JSONObject();
+        responseObject.put("userID", "core");
+        responseObject.put("fromUserID", stompClient.getTopics());
+        //返回数据
+        responseObject.put("message", message);
+        stompClient.send(Const.chat, responseObject.toString()).subscribe();
+    }
     //第一个功能，上线，后台命令查询坐标点区域文字。
     public static void CommandCore(Context context, JSONObject jsonObject, StompClient stompClient) throws JSONException, FileNotFoundException, InterruptedException {
         String command =jsonObject.getString("command");
-        JSONObject responseObject = new JSONObject();
-        jsonObject.put("userID", "core");
-        jsonObject.put("fromUserID", stompClient.getTopics());
         if(command.equals("1000")){
             JSONObject params= jsonObject.getJSONObject("params");
             int x1 = params.getInt("x1");
@@ -31,9 +39,6 @@ public class MessageCenter {
             CheckActions.MRectArea mRectArea = new CheckActions.MRectArea(x1,y1,x2,y2);
             String text = CheckActions.getCheckText(context,mRectArea,"星系");
             System.out.println(text);
-            //返回数据
-            jsonObject.put("message", text);
-            stompClient.send(Const.chat, jsonObject.toString()).subscribe();
         }
         if(command.equals("2000")){
             JSONObject params = jsonObject.getJSONObject("params");
@@ -41,12 +46,25 @@ public class MessageCenter {
             TouchPoint touchPoint = new TouchPoint(block);
             TouchEvent.postStartActionOnce(touchPoint);
         }
+        if(command.equals("3000")){
+            JSONObject params = jsonObject.getJSONObject("params");
+            JSONArray list =  params.getJSONArray("blocks");
+            List<MessageBlock> messageBlocks = new ArrayList<>();
+            for(int i=0;i<list.length();i++){
+                MessageBlock newBlock = getOneBlock(list.getJSONObject(i));
+                messageBlocks.add(newBlock);
+            }
+            for(MessageBlock block: messageBlocks){
+                TouchPoint touchPoint = new TouchPoint(block);
+                TouchEvent.postStartActionOnce(touchPoint);
+            }
+        }
     }
 
     public static MessageBlock getOneBlock(JSONObject object) throws JSONException {
         MessageBlock block = new MessageBlock();
-        block.setX1(object.getInt("x1"));
-        block.y1 = object.getInt("x2");
+        block.x1 = object.getInt("x1");
+        block.y1 = object.getInt("y1");
         block.delay = object.getInt("delay");
         block.eventName = (String) object.get("eventName");
         return block;

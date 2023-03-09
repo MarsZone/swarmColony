@@ -21,6 +21,7 @@ public class TouchPoint {
         this.name = block.getEventName();
         this.x = block.getX1();
         this.y = block.getY1();
+        this.hasNext = block.getHasNext();
         this.delay = block.getDelay();
     }
     public TouchPoint(String name, int x, int y, int delay,int hasNext) {

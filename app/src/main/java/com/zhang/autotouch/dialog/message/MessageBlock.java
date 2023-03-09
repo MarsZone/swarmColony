@@ -6,6 +6,7 @@ public class MessageBlock {
     int x1;
     int y1;
     int delay;
+    int hasNext;
     String eventName;
 
     public int getX1() {
@@ -38,5 +39,13 @@ public class MessageBlock {
 
     public void setEventName(String eventName) {
         this.eventName = eventName;
+    }
+
+    public int getHasNext() {
+        return hasNext;
+    }
+
+    public void setHasNext(int hasNext) {
+        this.hasNext = hasNext;
     }
 }

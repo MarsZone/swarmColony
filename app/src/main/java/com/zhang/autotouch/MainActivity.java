@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tvStart;
     private final String STRING_START = "开始";
-    private final String STRING_ACCESS = "无障碍服务";
+    private final String STRING_ACCESS = "辅助功能";
     private final String STRING_ALERT = "悬浮窗权限";/**
      * 权限请求值
      */

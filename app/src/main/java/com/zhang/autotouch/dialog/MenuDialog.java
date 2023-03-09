@@ -108,6 +108,8 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
     public String curProcess="";
     public String curNode="";
     TextView commandTextView;
+
+    public static StompClient stompClient;
     @Override
     protected void onInited() {
         setCanceledOnTouchOutside(true);
@@ -157,44 +159,45 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onReceiverTouchEventMain(TouchEvent event) throws InterruptedException, FileNotFoundException {
+    public void onReceiverTouchEventMain(TouchEvent event) throws InterruptedException, FileNotFoundException, JSONException {
         if(event.getAction()==TouchEvent.ACTION_START_ONCE_DONE){
-            if(curProcess.equals(ProcessActions.MiningProcess)){
-                String behaviour = ProcessActions.processMining(curNode,false);
-                if(behaviour.equals("checkIsFull")){
-                    boolean isFull = false;
-                    isFull = CheckActions.isFull(getContext());
-                    curNode="校验存储空间_step_2";
-                    behaviour = ProcessActions.processMining(curNode,isFull);
-                    if(behaviour.equals("unloadOre")){
-                        curNode="卸货_1";
-                        ProcessActions.unloadOre();
-                    }
-                    if(behaviour.equals("unFull")){
-                        curNode="待出站";
-                        ProcessActions.closeInventoryUI();
-                    }
-                }
-                if(behaviour.equals("closeCurUI")){
-                    curNode="待出站";
-                    ProcessActions.closeInventoryUI();
-                }
-                if(behaviour.equals("waitLevelStation")){
-                    curNode="待跃迁_矿区_1";
-                    ProcessActions.levelStation();
-                }
-                if(behaviour.equals("waitJumpToMine")){
-                    tempCheckHandler.postDelayed(runnableIsInStationCheck, 1500);
-                }
-                if(behaviour.equals("waitJumpArrive")){
-                    tempCheckHandler.postDelayed(runnableIsArrivedCheck,5000);
-                }
-                if(behaviour.equals("end")){
-                    Log.d("流程","库存未满结束");
-                    curNode="流程结束";
-                    ProcessActions.closeInventoryUI();
-                }
-            }
+            MessageCenter.sendMessage(stompClient,"行动完成");
+//            if(curProcess.equals(ProcessActions.MiningProcess)){
+//                String behaviour = ProcessActions.processMining(curNode,false);
+//                if(behaviour.equals("checkIsFull")){
+//                    boolean isFull = false;
+//                    isFull = CheckActions.isFull(getContext());
+//                    curNode="校验存储空间_step_2";
+//                    behaviour = ProcessActions.processMining(curNode,isFull);
+//                    if(behaviour.equals("unloadOre")){
+//                        curNode="卸货_1";
+//                        ProcessActions.unloadOre();
+//                    }
+//                    if(behaviour.equals("unFull")){
+//                        curNode="待出站";
+//                        ProcessActions.closeInventoryUI();
+//                    }
+//                }
+//                if(behaviour.equals("closeCurUI")){
+//                    curNode="待出站";
+//                    ProcessActions.closeInventoryUI();
+//                }
+//                if(behaviour.equals("waitLevelStation")){
+//                    curNode="待跃迁_矿区_1";
+//                    ProcessActions.levelStation();
+//                }
+//                if(behaviour.equals("waitJumpToMine")){
+//                    tempCheckHandler.postDelayed(runnableIsInStationCheck, 1500);
+//                }
+//                if(behaviour.equals("waitJumpArrive")){
+//                    tempCheckHandler.postDelayed(runnableIsArrivedCheck,5000);
+//                }
+//                if(behaviour.equals("end")){
+//                    Log.d("流程","库存未满结束");
+//                    curNode="流程结束";
+//                    ProcessActions.closeInventoryUI();
+//                }
+//            }
         }
     }
 
@@ -331,7 +334,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 break;
             case R.id.bt_action_open:
                 dismiss();
-                StompClient stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, Const.address);
+                stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, Const.address);
                 StompUtils.lifecycle(stompClient);
                 Toast.makeText(getContext(),"Start connecting to server", Toast.LENGTH_SHORT).show();
                 // Connect to WebSocket server

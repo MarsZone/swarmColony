@@ -40,7 +40,7 @@ public class FloatingService extends Service {
         super.onCreate();
         mFloatingView = creatView(R.layout.layout_window);
         //设置WindowManger布局参数以及相关属性
-        int d = DensityUtil.dip2px(this, 50);
+        int d = DensityUtil.dip2px(this, 35);
         floatLayoutParams = WindowUtils.newWmParams(d, d);
         //初始化位置
         floatLayoutParams.gravity = Gravity.TOP | Gravity.START;
