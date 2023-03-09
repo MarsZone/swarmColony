@@ -1,5 +1,7 @@
 package com.zhang.autotouch.bean;
 
+import com.zhang.autotouch.dialog.message.MessageBlock;
+
 public class TouchPoint {
     private String name;
     private int x;
@@ -14,6 +16,12 @@ public class TouchPoint {
         this.y = y;
         this.hasNext = 0;
         this.delay = delay;
+    }
+    public TouchPoint(MessageBlock block){
+        this.name = block.getEventName();
+        this.x = block.getX1();
+        this.y = block.getY1();
+        this.delay = block.getDelay();
     }
     public TouchPoint(String name, int x, int y, int delay,int hasNext) {
         this.name = name;

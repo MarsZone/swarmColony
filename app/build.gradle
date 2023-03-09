@@ -30,6 +30,7 @@ dependencies {
     implementation 'com.rmtheis:tess-two:9.1.0'
 //    api "com.github.NaikSoftware:StompProtocolAndroid:1.6.6"
     implementation 'com.github.MarsZone:StompProtocolAndroid:1.8'
+    compileOnly "org.projectlombok:lombok:1.18.26"
     api "io.reactivex.rxjava2:rxjava:2.2.5"
     implementation 'org.java-websocket:Java-WebSocket:1.3.7'
 

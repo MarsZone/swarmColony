@@ -100,16 +100,16 @@ public class AutoTouchService extends AccessibilityService {
                 break;
         }
     }
-    public void disPatchEvent(int hasNext) throws InterruptedException {
-        if(autoTouchPoint.getName().equals("库存界面")){
-            Thread.sleep(2000);
-            TouchEvent.postStartActionOnceDone();
-        }else {
-            if(hasNext==1){
-                TouchEvent.postStartActionOnceDone();
-            }
-        }
-    }
+//    public void disPatchEvent(int hasNext) throws InterruptedException {
+//        if(autoTouchPoint.getName().equals("库存界面")){
+//            Thread.sleep(2000);
+//            TouchEvent.postStartActionOnceDone();
+//        }else {
+//            if(hasNext==1){
+//                TouchEvent.postStartActionOnceDone();
+//            }
+//        }
+//    }
 
     public void onAutoClickOnce(){
         class touchRunnable implements Runnable{
@@ -133,11 +133,11 @@ public class AutoTouchService extends AccessibilityService {
                     public void onCompleted(GestureDescription gestureDescription) {
                         super.onCompleted(gestureDescription);
                         Log.d("AutoTouchServiceOnce", "滑动结束Once" + gestureDescription.getStrokeCount());
-                        try {
-                            disPatchEvent(mhasNext);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+//                        try {
+//                            disPatchEvent(mhasNext);
+//                        } catch (InterruptedException e) {
+//                            throw new RuntimeException(e);
+//                        }
                     }
                     @Override
                     public void onCancelled(    GestureDescription gestureDescription) {

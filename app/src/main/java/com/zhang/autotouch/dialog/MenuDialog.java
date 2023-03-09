@@ -350,7 +350,6 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                     message.obj = jsonObject.getString("responseMessage") + "\n";
                     updateTextViewHandler.sendMessage(message);
                     MessageCenter.CommandCore(context,jsonObject,stompClient);
-
                 });
                 // 绑定广播
                 Log.i(Const.TAG, "Subscribe broadcast endpoint to receive response");
