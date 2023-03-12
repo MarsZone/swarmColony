@@ -1,6 +1,7 @@
 package com.zhang.autotouch.dialog.message;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.zhang.autotouch.actions.CheckActions;
 import com.zhang.autotouch.bean.TouchEvent;
@@ -30,6 +31,12 @@ public class MessageCenter {
     //第一个功能，上线，后台命令查询坐标点区域文字。
     public static void CommandCore(Context context, JSONObject jsonObject, StompClient stompClient) throws JSONException, FileNotFoundException, InterruptedException {
         String command =jsonObject.getString("command");
+        if(command.equals("10")){
+            JSONObject params= jsonObject.getJSONObject("params");
+            String content = params.getString("content");
+            Toast.makeText(context, content, Toast.LENGTH_SHORT).show();
+        }
+
         if(command.equals("1000")){
             JSONObject params= jsonObject.getJSONObject("params");
             int x1 = params.getInt("x1");

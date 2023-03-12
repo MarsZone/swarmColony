@@ -333,7 +333,8 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 touchPointAdapter.setTouchPointList(touchPoints);
                 break;
             case R.id.bt_action_open:
-                dismiss();
+//                dismiss();
+                //链接
                 stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, Const.address);
                 StompUtils.lifecycle(stompClient);
                 Toast.makeText(getContext(),"Start connecting to server", Toast.LENGTH_SHORT).show();
@@ -366,11 +367,9 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
 
                 break;
             case R.id.bt_check_kc:
-                //校验库存量
-                dismiss();
                 try {
-                    boolean isFull = CheckActions.isFullFast(getContext());
-                } catch (FileNotFoundException | InterruptedException e) {
+                    MessageCenter.sendMessage(stompClient,"C666");
+                } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -390,6 +389,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 btStop.setVisibility(View.GONE);
                 TouchEvent.postStopAction();
                 ToastUtil.show("已停止触控");
+//                dismiss();
                 break;
             //                dismiss();
 //                if (listener != null) {
@@ -414,6 +414,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 if (listener != null) {
                     listener.onExitService();
                 }
+                dismiss();
                 break;
 
         }
