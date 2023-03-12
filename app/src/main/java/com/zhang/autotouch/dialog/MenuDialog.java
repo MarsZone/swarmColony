@@ -110,6 +110,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
     TextView commandTextView;
 
     public static StompClient stompClient;
+    public static StompClient stompClientPublic;
     @Override
     protected void onInited() {
         setCanceledOnTouchOutside(true);
@@ -334,6 +335,19 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 break;
             case R.id.bt_action_open:
 //                dismiss();
+                // 绑定广播
+                Log.i(Const.TAG, "Subscribe broadcast endpoint to receive response");
+                stompClientPublic = Stomp.over(Stomp.ConnectionProvider.OKHTTP, Const.address);
+                StompUtils.lifecycle(stompClientPublic);
+                stompClientPublic.connect();
+                stompClientPublic.topic(Const.broadcastResponse).subscribe(stompMessage -> {
+                    JSONObject jsonObject = new JSONObject(stompMessage.getPayload());
+                    Log.i(Const.TAG, "Receive: " + stompMessage.getPayload());
+                    Message message = new Message();
+                    message.obj = jsonObject.getString("responseMessage") + "\n";
+                    updateTextViewHandler.sendMessage(message);
+                });
+
                 //链接
                 stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, Const.address);
                 StompUtils.lifecycle(stompClient);
@@ -346,6 +360,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 stompClient.connect(headers);
                 StompUtils.lifecycle(stompClient);
                 Context context = getContext();
+                MessageCenter.uuid = uuid;
                 //绑定私聊
                 stompClient.topic(Const.chatResponse.replace(Const.placeholder, uuid)).subscribe(stompMessage -> {
                     JSONObject jsonObject = new JSONObject(stompMessage.getPayload());
@@ -354,15 +369,6 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                     message.obj = jsonObject.getString("responseMessage") + "\n";
                     updateTextViewHandler.sendMessage(message);
                     MessageCenter.CommandCore(context,jsonObject,stompClient);
-                });
-                // 绑定广播
-                Log.i(Const.TAG, "Subscribe broadcast endpoint to receive response");
-                stompClient.topic(Const.broadcastResponse).subscribe(stompMessage -> {
-                    JSONObject jsonObject = new JSONObject(stompMessage.getPayload());
-                    Log.i(Const.TAG, "Receive: " + stompMessage.getPayload());
-                    Message message = new Message();
-                    message.obj = jsonObject.getString("responseMessage") + "\n";
-//                    updateTextViewHandler.sendMessage(message);
                 });
 
                 break;

@@ -20,13 +20,18 @@ import java.util.Objects;
 import ua.naiksoftware.stomp.StompClient;
 
 public class MessageCenter {
+    public static String uuid="";
     public static void sendMessage(StompClient stompClient,String message) throws JSONException {
-        JSONObject responseObject = new JSONObject();
-        responseObject.put("userID", "core");
-        responseObject.put("fromUserID", stompClient.getTopics());
-        //返回数据
-        responseObject.put("message", message);
-        stompClient.send(Const.chat, responseObject.toString()).subscribe();
+        if(uuid.equals("")){
+            //Bus消息提示
+        }else {
+            JSONObject responseObject = new JSONObject();
+            responseObject.put("userID", "core");
+            responseObject.put("fromUserID", uuid);
+            //返回数据
+            responseObject.put("message", message);
+            stompClient.send(Const.chat, responseObject.toString()).subscribe();
+        }
     }
     //第一个功能，上线，后台命令查询坐标点区域文字。
     public static void CommandCore(Context context, JSONObject jsonObject, StompClient stompClient) throws JSONException, FileNotFoundException, InterruptedException {
