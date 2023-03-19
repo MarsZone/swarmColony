@@ -43,7 +43,7 @@
             android:layout_marginStart="1dp"
             android:layout_weight="1"
             android:background="#666"
-            android:text="清除触控点"
+            android:text="清除消息"
             android:textColor="#fff"
             android:textSize="15sp" />
 

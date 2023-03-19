@@ -334,6 +334,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 SpUtils.clear(getContext());
                 List<TouchPoint> touchPoints = SpUtils.getTouchPoints(getContext());
                 Log.d("数据", GsonUtils.beanToJson(touchPoints));
+                commandTextView.setText("");
                 touchPointAdapter.setTouchPointList(touchPoints);
                 break;
             case R.id.bt_action_open:
@@ -377,6 +378,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 break;
             case R.id.bt_check_kc:
                 try {
+                    //请求密码
                     MessageCenter.sendMessage(stompClient,new Response("C666",""));
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
