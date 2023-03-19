@@ -3,6 +3,9 @@ package com.zhang.autotouch.dialog.message;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+import com.zhang.autotouch.R;
 import com.zhang.autotouch.actions.CheckActions;
 import com.zhang.autotouch.bean.TouchEvent;
 import com.zhang.autotouch.bean.TouchPoint;
@@ -21,7 +24,7 @@ import ua.naiksoftware.stomp.StompClient;
 
 public class MessageCenter {
     public static String uuid="";
-    public static void sendMessage(StompClient stompClient,String message) throws JSONException {
+    public static void sendMessage(StompClient stompClient,Response response) throws JSONException {
         if(uuid.equals("")){
             //Bus消息提示
         }else {
@@ -29,7 +32,9 @@ public class MessageCenter {
             responseObject.put("userID", "core");
             responseObject.put("fromUserID", uuid);
             //返回数据
-            responseObject.put("message", message);
+            Gson gson = new Gson();
+            String responseJson = gson.toJson(response);
+            responseObject.put("message", responseJson);
             stompClient.send(Const.chat, responseObject.toString()).subscribe();
         }
     }
@@ -48,8 +53,11 @@ public class MessageCenter {
             int x2 = params.getInt("x2");
             int y1 = params.getInt("y1");
             int y2 = params.getInt("y2");
+            String desc = params.getString("desc");
             CheckActions.MRectArea mRectArea = new CheckActions.MRectArea(x1,y1,x2,y2);
-            String text = CheckActions.getCheckText(context,mRectArea,"星系");
+            String text = CheckActions.getCheckText(context,mRectArea,desc);
+            //返回数据
+            sendMessage(stompClient,new Response("C1010",text));
             System.out.println(text);
         }
         if(command.equals("2000")){

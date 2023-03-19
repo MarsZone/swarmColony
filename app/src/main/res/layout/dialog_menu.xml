@@ -54,7 +54,7 @@
             android:layout_marginStart="1dp"
             android:layout_weight="1"
             android:background="#666"
-            android:text="挖矿"
+            android:text="关闭"
             android:textColor="#fff"
             android:textSize="15sp" />
 
@@ -95,7 +95,7 @@
     <TextView
         android:id="@+id/txcommond"
         android:layout_width="match_parent"
-        android:layout_height="79dp"
+        android:layout_height="96dp"
         android:text="命令信息" />
 
     <TextView

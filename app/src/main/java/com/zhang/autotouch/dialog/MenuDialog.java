@@ -26,6 +26,7 @@ import com.zhang.autotouch.bean.TouchEvent;
 import com.zhang.autotouch.bean.TouchPoint;
 import com.zhang.autotouch.conf.Const;
 import com.zhang.autotouch.dialog.message.MessageCenter;
+import com.zhang.autotouch.dialog.message.Response;
 import com.zhang.autotouch.utils.DensityUtil;
 import com.zhang.autotouch.utils.DialogUtils;
 import com.zhang.autotouch.utils.GsonUtils;
@@ -162,7 +163,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onReceiverTouchEventMain(TouchEvent event) throws InterruptedException, FileNotFoundException, JSONException {
         if(event.getAction()==TouchEvent.ACTION_START_ONCE_DONE){
-            MessageCenter.sendMessage(stompClient,"行动完成");
+            MessageCenter.sendMessage(stompClient,new Response("C10","行动完成"));
 //            if(curProcess.equals(ProcessActions.MiningProcess)){
 //                String behaviour = ProcessActions.processMining(curNode,false);
 //                if(behaviour.equals("checkIsFull")){
@@ -307,7 +308,9 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
             super.handleMessage(msg);
             String busMessage = msg.obj.toString();
             //更新UI线程
-            commandTextView.append(busMessage);
+            if(!busMessage.equals("命令执行")){
+                commandTextView.append(busMessage);
+            }
         }
     };
     @Override
@@ -374,7 +377,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 break;
             case R.id.bt_check_kc:
                 try {
-                    MessageCenter.sendMessage(stompClient,"C666");
+                    MessageCenter.sendMessage(stompClient,new Response("C666",""));
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -382,14 +385,14 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
             case R.id.bt_record:
                 dismiss();
                 //检查库存情况
-                Log.d("流程","开启页面");
-                try {
-                    curProcess =ProcessActions.MiningProcess;
-                    ProcessActions.openInventory();
-                    curNode="校验存储空间_step_1";
-                } catch ( InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+//                Log.d("流程","开启页面");
+//                try {
+//                    curProcess =ProcessActions.MiningProcess;
+//                    ProcessActions.openInventory();
+//                    curNode="校验存储空间_step_1";
+//                } catch ( InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
                 break;
             case R.id.bt_stop:
                 btStop.setVisibility(View.GONE);
@@ -420,7 +423,6 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 if (listener != null) {
                     listener.onExitService();
                 }
-                dismiss();
                 break;
 
         }
