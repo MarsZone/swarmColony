@@ -308,7 +308,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
             super.handleMessage(msg);
             String busMessage = msg.obj.toString();
             //更新UI线程
-            if(!busMessage.equals("命令执行")){
+            if(!busMessage.contains("命令执行")){
                 commandTextView.append(busMessage);
             }
         }

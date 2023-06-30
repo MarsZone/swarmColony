@@ -38,6 +38,19 @@ public class MessageCenter {
             stompClient.send(Const.chat, responseObject.toString()).subscribe();
         }
     }
+
+    public static String getCheckText(Context context, JSONObject jsonObject) throws JSONException, FileNotFoundException, InterruptedException {
+        String text = "";
+        JSONObject params= jsonObject.getJSONObject("params");
+        int x1 = params.getInt("x1");
+        int x2 = params.getInt("x2");
+        int y1 = params.getInt("y1");
+        int y2 = params.getInt("y2");
+        String desc = params.getString("desc");
+        CheckActions.MRectArea mRectArea = new CheckActions.MRectArea(x1,y1,x2,y2);
+        text = CheckActions.getCheckText(context,mRectArea,desc);
+        return text;
+    }
     //第一个功能，上线，后台命令查询坐标点区域文字。
     public static void CommandCore(Context context, JSONObject jsonObject, StompClient stompClient) throws JSONException, FileNotFoundException, InterruptedException {
         String command =jsonObject.getString("command");
@@ -47,15 +60,15 @@ public class MessageCenter {
             Toast.makeText(context, content, Toast.LENGTH_SHORT).show();
         }
 
+        if(command.equals("CK1000")){
+            //判断当前用户界面有没有打开，有就返回是，没有返回否
+            String text = getCheckText(context,jsonObject);
+            //返回数据
+            sendMessage(stompClient,new Response("CKR1000",text));
+        }
+
         if(command.equals("1000")){
-            JSONObject params= jsonObject.getJSONObject("params");
-            int x1 = params.getInt("x1");
-            int x2 = params.getInt("x2");
-            int y1 = params.getInt("y1");
-            int y2 = params.getInt("y2");
-            String desc = params.getString("desc");
-            CheckActions.MRectArea mRectArea = new CheckActions.MRectArea(x1,y1,x2,y2);
-            String text = CheckActions.getCheckText(context,mRectArea,desc);
+            String text = getCheckText(context,jsonObject);
             //返回数据
             sendMessage(stompClient,new Response("C1010",text));
             System.out.println(text);
