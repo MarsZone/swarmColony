@@ -81,7 +81,7 @@ public class AutoTouchService extends AccessibilityService {
             case TouchEvent.ACTION_START_ONCE:
                 autoTouchPoint = event.getTouchPoint();
                 if (autoTouchPoint != null) {
-                    onAutoClickOnce();
+                    onAutoClickOnce(autoTouchPoint);
                 }
             case TouchEvent.ACTION_CONTINUE:
                 if (autoTouchPoint != null) {
@@ -100,19 +100,19 @@ public class AutoTouchService extends AccessibilityService {
                 break;
         }
     }
-    public void disPatchEvent(int hasNext) throws InterruptedException {
-        if(hasNext==1){
-            TouchEvent.postStartActionOnceDone();
+    public void disPatchEvent(TouchPoint touchPoint) throws InterruptedException {
+        if(touchPoint.getHasNext()==2){
+            TouchEvent.postActionsSequenceDone(touchPoint);
         }
     }
 
-    public void onAutoClickOnce(){
+    public void onAutoClickOnce(TouchPoint touchPoint){
         class touchRunnable implements Runnable{
             int mx=0;
             int my=0;
-            int mhasNext=0;
-            touchRunnable(int x,int y,int hasNext){
-                mx=x;my=y;mhasNext = hasNext;
+            TouchPoint mTouchPoint;
+            touchRunnable(int x,int y,TouchPoint touchPoint){
+                mx=x;my=y;mTouchPoint = touchPoint;
             }
             @Override
             public void run() {
@@ -129,7 +129,7 @@ public class AutoTouchService extends AccessibilityService {
                         super.onCompleted(gestureDescription);
                         Log.d("AutoTouchServiceOnce", "滑动结束Once" + gestureDescription.getStrokeCount());
                         try {
-                            disPatchEvent(mhasNext);
+                            disPatchEvent(touchPoint);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -142,7 +142,7 @@ public class AutoTouchService extends AccessibilityService {
                 }, null);
             }
         }
-        new Handler().postDelayed(new touchRunnable(autoTouchPoint.getX(),autoTouchPoint.getY(),autoTouchPoint.getHasNext()),autoTouchPoint.getDelay());
+        new Handler().postDelayed(new touchRunnable(autoTouchPoint.getX(),autoTouchPoint.getY(),autoTouchPoint),autoTouchPoint.getDelay());
     }
     /**
      * 执行自动点击

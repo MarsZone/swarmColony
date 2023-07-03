@@ -9,7 +9,7 @@ public class TouchPoint {
     private int delay;
 
     private int hasNext;
-
+    private String nextNode;
     public TouchPoint(String name, int x, int y, int delay) {
         this.name = name;
         this.x = x;
@@ -23,6 +23,7 @@ public class TouchPoint {
         this.y = block.getY1();
         this.hasNext = block.getHasNext();
         this.delay = block.getDelay();
+        this.nextNode = block.getNextNode();
     }
     public TouchPoint(String name, int x, int y, int delay,int hasNext) {
         this.name = name;
@@ -70,5 +71,13 @@ public class TouchPoint {
 
     public void setHasNext(int hasNext) {
         this.hasNext = hasNext;
+    }
+
+    public String getNextNode() {
+        return nextNode;
+    }
+
+    public void setNextNode(String nextNode) {
+        this.nextNode = nextNode;
     }
 }

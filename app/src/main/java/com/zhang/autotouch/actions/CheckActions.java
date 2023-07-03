@@ -27,7 +27,7 @@ public class CheckActions {
         FileInputStream fis = null;
         fis = new FileInputStream(fileName);
         Bitmap orgBitmap  = BitmapFactory.decodeStream(fis);
-        Bitmap checkArea = DialogUtils.cropBitmapTop(orgBitmap,736,684,749,696);
+        Bitmap checkArea = DialogUtils.cropBitmapTop(orgBitmap,760,687,773,699);
         int avgColor = BitMapUtils.getAvgColor(checkArea);
         Log.d("FullCheck",""+avgColor);
         //63 22
@@ -90,7 +90,7 @@ public class CheckActions {
     }
 
     public static String getCheckText(Context context,MRectArea mRectArea,String checkDesc) throws InterruptedException, FileNotFoundException {
-        String fileName = saveCurrentScreen(context,"1","isInStationTemp");
+        String fileName = saveCurrentScreen(context,"1","checkTextTemp");
         //读取整个图。。
         FileInputStream fis = null;
         fis = new FileInputStream(fileName);

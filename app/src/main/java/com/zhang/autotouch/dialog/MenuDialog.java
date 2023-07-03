@@ -162,44 +162,52 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onReceiverTouchEventMain(TouchEvent event) throws InterruptedException, FileNotFoundException, JSONException {
-        if(event.getAction()==TouchEvent.ACTION_START_ONCE_DONE){
-            MessageCenter.sendMessage(stompClient,new Response("C10","行动完成"));
-//            if(curProcess.equals(ProcessActions.MiningProcess)){
-//                String behaviour = ProcessActions.processMining(curNode,false);
-//                if(behaviour.equals("checkIsFull")){
-//                    boolean isFull = false;
-//                    isFull = CheckActions.isFull(getContext());
-//                    curNode="校验存储空间_step_2";
-//                    behaviour = ProcessActions.processMining(curNode,isFull);
-//                    if(behaviour.equals("unloadOre")){
-//                        curNode="卸货_1";
-//                        ProcessActions.unloadOre();
-//                    }
-//                    if(behaviour.equals("unFull")){
-//                        curNode="待出站";
-//                        ProcessActions.closeInventoryUI();
-//                    }
-//                }
-//                if(behaviour.equals("closeCurUI")){
-//                    curNode="待出站";
-//                    ProcessActions.closeInventoryUI();
-//                }
-//                if(behaviour.equals("waitLevelStation")){
-//                    curNode="待跃迁_矿区_1";
-//                    ProcessActions.levelStation();
-//                }
-//                if(behaviour.equals("waitJumpToMine")){
-//                    tempCheckHandler.postDelayed(runnableIsInStationCheck, 1500);
-//                }
-//                if(behaviour.equals("waitJumpArrive")){
-//                    tempCheckHandler.postDelayed(runnableIsArrivedCheck,5000);
-//                }
-//                if(behaviour.equals("end")){
-//                    Log.d("流程","库存未满结束");
-//                    curNode="流程结束";
-//                    ProcessActions.closeInventoryUI();
-//                }
-//            }
+        if(event.getAction()==TouchEvent.ACTIONS_SEQUENCE_DONE){
+            String nextActionNode = event.getTouchPoint().getNextNode();
+            if (nextActionNode.equals("出站中")){
+                for(int i=0;i<5;i++){
+                    Thread.sleep(2000);
+                    boolean isInStation = CheckActions.isInStation(getContext());
+                    if(!isInStation){
+                        nextActionNode = "已出站";
+                        break;
+                    }
+                }
+            }
+            if (nextActionNode.equals("等待跃迁完成")){
+                for(int i=0;i<10;i++){
+                    Thread.sleep(2000);
+                    boolean isSpaceJumping = CheckActions.isSpaceJumping(getContext());
+                    if(!isSpaceJumping){
+                        nextActionNode = "跃迁完成";
+                        break;
+                    }
+                }
+            }
+            if (nextActionNode.equals("作业中")){
+                for(int i=0;i<100;i++){
+                    Thread.sleep(15000);
+                    boolean isSpaceJumping = CheckActions.isFullFast(getContext());
+                    if(!isSpaceJumping){
+                        nextActionNode = "满仓";
+                        break;
+                    }else{
+                        //随便换个挖
+                        ProcessActions.randomChangeTargetProcess();
+                    }
+                }
+            }
+            if (nextActionNode.equals("停靠")){
+                for(int i=0;i<15;i++){
+                    Thread.sleep(10000);
+                    boolean isInStation = CheckActions.isInStation(getContext());
+                    if(isInStation){
+                        nextActionNode = "已停靠";
+                        break;
+                    }
+                }
+            }
+            MessageCenter.sendMessage(stompClient,new Response("C100",nextActionNode));
         }
     }
 

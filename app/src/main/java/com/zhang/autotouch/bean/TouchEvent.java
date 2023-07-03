@@ -17,6 +17,7 @@ public class TouchEvent {
     public static final int ACTION_CAPTURE=5;
     public static final int ACTION_START_ONCE = 6;
     public static final int ACTION_START_ONCE_DONE = 7;
+    public static final int ACTIONS_SEQUENCE_DONE = 7;
     private int action;
     private TouchPoint touchPoint;
 
@@ -46,6 +47,9 @@ public class TouchEvent {
     }
     public static void postStartActionOnce(TouchPoint touchPoint) {
         postAction(new TouchEvent(ACTION_START_ONCE, touchPoint));
+    }
+    public static void postActionsSequenceDone(TouchPoint touchPoint){
+        postAction(new TouchEvent(ACTIONS_SEQUENCE_DONE, touchPoint));
     }
     public static void postStartActionOnceDone() {
         postAction(new TouchEvent(ACTION_START_ONCE_DONE));

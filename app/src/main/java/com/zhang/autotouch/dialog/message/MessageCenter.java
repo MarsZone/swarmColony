@@ -67,6 +67,16 @@ public class MessageCenter {
             sendMessage(stompClient,new Response("CKR1000",text));
         }
 
+        if(command.equals("CK2000")){
+            boolean isFull = false;
+            isFull = CheckActions.isFull(context);
+            if(isFull){
+                sendMessage(stompClient,new Response("CKR2000","满仓"));
+            }else{
+                sendMessage(stompClient,new Response("CKR2000","空仓"));
+            }
+        }
+
         if(command.equals("1000")){
             String text = getCheckText(context,jsonObject);
             //返回数据
@@ -92,13 +102,16 @@ public class MessageCenter {
                 TouchEvent.postStartActionOnce(touchPoint);
             }
         }
+
     }
 
     public static MessageBlock getOneBlock(JSONObject object) throws JSONException {
         MessageBlock block = new MessageBlock();
         block.x1 = object.getInt("x1");
         block.y1 = object.getInt("y1");
+        block.hasNext = object.getInt("hasNext");
         block.delay = object.getInt("delay");
+        block.nextNode = object.getString("nextNode");
         block.eventName = (String) object.get("eventName");
         return block;
     }
